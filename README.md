@@ -33,7 +33,7 @@ expense-tracker-api/
 │       ├── income.py      # /income CRUD + filters
 │       └── analytics.py   # /analytics/* (pandas-powered)
 ├── alembic/                # migrations (env.py wired to app settings)
-├── tests/                  # pytest suite (19 tests)
+├── tests/                  # pytest suite (29 tests)
 ├── requirements.txt
 ├── .env.example
 └── alembic.ini
@@ -152,15 +152,27 @@ Example `/analytics/summary` response:
 
 ## Running tests
 
+Run the complete test suite from the project root:
+
 ```bash
-pytest tests/ -v
+python -m pytest -q
 ```
 
-The suite (19 tests) covers registration/login, JWT-protected routes,
-expense/income CRUD, category and date filtering, per-user data isolation,
-and all four analytics endpoints (including the empty-data edge case).
-Tests run against an isolated SQLite file that's created and torn down
-per test, so they never touch your dev database.
+The test suite contains 29 tests covering:
+
+- **Unit testing:** Password hashing, password verification, JWT creation, invalid tokens, and expired tokens.
+- **API integration testing:** Authentication, expense and income CRUD, analytics endpoints, filtering, and per-user data isolation.
+- **Input validation:** Invalid expense amounts, invalid categories, invalid query parameters, and missing required income fields.
+
+Tests use an isolated in-memory SQLite database, protecting the configured application database and existing database files.
+
+## Continuous Integration
+
+GitHub Actions automatically installs project dependencies and runs the pytest suite on pushes to `main` and pull requests targeting `main`.
+
+Workflow configuration: `.github/workflows/ci.yml`
+
+Run status: [View GitHub Actions](https://github.com/Prathmpol/expense-tracker-api/actions)
 
 ## Notes / design decisions
 
