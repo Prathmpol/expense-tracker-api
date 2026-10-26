@@ -34,3 +34,29 @@ def test_delete_income(client, auth_headers):
 
     resp = client.get(f"/income/{income_id}", headers=auth_headers)
     assert resp.status_code == 404
+
+def test_create_income_rejects_zero_amount(client, auth_headers):
+    resp = client.post(
+        "/income",
+        json={
+            "amount": 0,
+            "source": "Salary",
+            "date": "2026-08-01",
+        },
+        headers=auth_headers,
+    )
+
+    assert resp.status_code == 422
+
+
+def test_create_income_rejects_missing_source(client, auth_headers):
+    resp = client.post(
+        "/income",
+        json={
+            "amount": 1000,
+            "date": "2026-08-01",
+        },
+        headers=auth_headers,
+    )
+
+    assert resp.status_code == 422
